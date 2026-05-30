@@ -102,6 +102,101 @@
 
     // Start your code here
     // You may move this JS to another file if you wish
+    
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      let output = document.querySelector('output');
+      let firstNum = document.querySelector('#first-num').value;
+      let secondNum = document.querySelector('#second-num').value;
+      let operator = document.querySelector('#operator').value;
+      
+      try {
+        if (firstNum.trim() === '' || secondNum.trim() === '') {
+          throw new ValidationError('Inputs cannot be left blank.');
+        }
+
+        if (isNaN(firstNum) || isNaN(secondNum)) {
+          throw new ValidationError('Calculator only accepts numeric inputs.');
+        }
+
+        if (operator === '/' && Number(secondNum) === 0) {
+          throw new DivideByZeroError('Division by zero is mathematically undefined.');
+        }
+
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      } catch (error) {
+        if (error instanceof ValidationError || error instanceof DivideByZeroError) {
+          console.error(`[Caught Application Error] Type: ${error.name} | Message: ${error.message}`);
+          output.innerHTML = `⚠️ Error: ${error.message}`;
+        } else {
+          console.error(`[Unexpected Error]: ${error.message}`);
+          output.innerHTML = "An unexpected error occurred.";
+        }
+      } finally {
+        console.log('%c Calculator attempt finished processing. ', 'color: #00bcd4; font-weight: bold;');
+      }
+    });
+
+    class ValidationError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "ValidationError";
+      }
+    }
+
+    class DivideByZeroError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "DivideByZeroError";
+      }
+    }
+
+    const testArray = [
+      { course: 'CSE 110', lab: 9, topic: 'Error Handling' },
+      { course: 'CSE 110', lab: 10, topic: 'CI/CD Pipelines' }
+    ];
+
+    errorBtns[0].addEventListener('click', () => console.log('Console Log Demo: This is a standard log output.'));
+    errorBtns[1].addEventListener('click', () => console.error('Console Error Demo: Triggering a simulated error log.'));
+    errorBtns[2].addEventListener('click', () => console.count('Click Counter'));
+    errorBtns[3].addEventListener('click', () => console.warn('Console Warn Demo: Beware of unhandled promises!'));
+    errorBtns[4].addEventListener('click', () => {
+      const x = 5, y = 10;
+      console.assert(x > y, `Assertion Failed: ${x} is not greater than ${y}`);
+    });
+    errorBtns[5].addEventListener('click', () => console.clear());
+    errorBtns[6].addEventListener('click', () => console.dir(document.querySelector('form')));
+    errorBtns[7].addEventListener('click', () => console.dirxml(document.querySelector('fieldset')));
+
+    const groupLabel = 'Lab 9 Step Progress';
+    errorBtns[8].addEventListener('click', () => {
+      console.group(groupLabel);
+      console.log('Validating UI bindings...');
+      console.log('Injecting TrackJS Telemetry snippet...');
+    });
+    errorBtns[9].addEventListener('click', () => console.groupEnd(groupLabel));
+
+    errorBtns[10].addEventListener('click', () => console.table(testArray));
+
+    errorBtns[11].addEventListener('click', () => console.time('Execution Timer'));
+    errorBtns[12].addEventListener('click', () => console.timeEnd('Execution Timer'));
+
+    errorBtns[13].addEventListener('click', () => {
+      const deepTrace = () => { deeperTrace(); };
+      const deeperTrace = () => { console.trace('Trace Log Stack:'); };
+      deepTrace();
+    });
+
+    errorBtns[14].addEventListener('click', () => {
+      console.log(forcefullyCrashApplicationWithUndefinedVariable);
+    });
+
+    window.addEventListener('error', (event) => {
+      console.log('%c [Global Error Intercepted Successfully] ', 'background: #b00020; color: #fff; padding: 2px 5px;');
+      console.log(`Message: ${event.message}`);
+      console.log(`Source: ${event.filename} at line ${event.lineno}`);
+    });
   </script>
 </body>
 
